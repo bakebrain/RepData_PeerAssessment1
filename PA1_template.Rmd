@@ -9,7 +9,7 @@ setDefaults('as.Date.character', format = '%Y-%m-%d')
 
 activity <- read.csv(file='activity.csv', header=TRUE, 
                      colClasses = c("numeric","Date","numeric"))
-activity.complete <- activity[complete.cases(activity),]
+activity.complete_cases <- activity[complete.cases(activity),]
 ```
 
 ## What is mean total number of steps taken per day?
@@ -17,39 +17,41 @@ activity.complete <- activity[complete.cases(activity),]
 library(lattice)
 library(plyr)
 
-activity.daily <- ddply(activity.complete, .(date), 
+activity.complete_cases.daily <- ddply(activity.complete_cases, .(date), 
                         summarize, steps=sum(steps))
-histogram(activity.daily$steps, breaks=15)
+histogram(activity.complete_cases.daily$steps, breaks=15)
 ```
 
 ### Mean and median daily steps (complete cases)
 ```{r}
-mean(activity.daily$steps)
-median(activity.daily$steps)
+mean(activity.complete_cases.daily$steps)
+median(activity.complete_cases.daily$steps)
 ```
 
 ## What is the average daily activity pattern?
 ```{r}
-activity.daily.average <- ddply(activity.complete, .(interval), summarize, steps=mean(steps))
-xyplot(steps ~ interval , data=activity.daily.average, type="l")
+activity.complete_cases.daily_average <- ddply(activity.complete_cases, .(interval), summarize, steps=mean(steps))
+xyplot(steps ~ interval , data=activity.complete_cases.daily_average, type="l")
 ```
 
 ## Imputing missing values
 ```{r}
 activity.missing <- activity[is.na(activity$steps),]
-activity.missing$steps <- activity.daily.average$steps[match(activity.missing$interval, 
-                                                             activity.daily.average$interval)]
+activity.missing$steps <- activity.complete_cases.daily_average$steps[
+  match(activity.missing$interval, 
+        activity.complete_cases.daily_average$interval)]
+
 activity$steps <- ifelse(is.na(activity$steps), activity.missing$steps, activity$steps)
 
-activity.daily.complete <- ddply(activity, .(date), 
-                        summarize, steps=sum(steps))
-histogram(activity.daily.complete$steps, breaks=15)
+activity.daily <- ddply(activity, .(date), summarize, steps=sum(steps))
+
+histogram(activity.daily$steps, breaks=15)
 ```
 
 ### Mean and median daily steps (imputed)
 ```{r}
-mean(activity.daily.complete$steps)
-median(activity.daily.complete$steps)
+mean(activity.daily$steps)
+median(activity.daily$steps)
 ```
 
 ## Are there differences in activity patterns between weekdays and weekends?
