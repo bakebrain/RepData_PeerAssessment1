@@ -2,15 +2,34 @@
 
 
 ## Loading and preprocessing the data
+```{r setoptions, echo=TRUE}
+library(Defaults)
+setDefaults('as.Date.character', format = '%Y-%m-%d')
 
-
+activity <- read.csv(file='activity.csv', header=TRUE, 
+                     colClasses = c("numeric","Date","numeric"))
+activity.complete <- activity[complete.cases(activity),]
+```
 
 ## What is mean total number of steps taken per day?
+```{r}
+library(lattice)
+library(plyr)
 
+activity.daily <- ddply(activity.complete, .(date), 
+                        summarize, steps=sum(steps))
+histogram(activity.daily$steps, breaks=15)
+mean(activity.daily$steps)
+median(activity.daily$steps)
+```
 
 
 ## What is the average daily activity pattern?
+```{r}
+activity.daily.average <- ddply(activity.complete, .(interval), summarize, steps=mean(steps))
+xyplot(steps ~ interval , data=activity.daily.average, type="l")
 
+```
 
 
 ## Imputing missing values
