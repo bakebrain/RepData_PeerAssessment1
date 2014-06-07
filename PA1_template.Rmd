@@ -30,14 +30,18 @@ median(activity.complete_cases.daily$steps)
 
 ## What is the average daily activity pattern?
 ```{r}
-activity.complete_cases.daily_average <- ddply(activity.complete_cases, .(interval), summarize, steps=mean(steps))
+activity.complete_cases.daily_average <- ddply(activity.complete_cases, 
+                                               .(interval), summarize, 
+                                               steps=mean(steps))
 xyplot(steps ~ interval , data=activity.complete_cases.daily_average, type="l")
 ```
 
-### Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
+### Which 5-minute interval, on average across all the days in the dataset, 
+### contains the maximum number of steps?
 
 ```{r}
-activity.complete_cases.daily_average[which.max(activity.complete_cases.daily_average$steps),]
+activity.complete_cases.daily_average[which.max(
+  activity.complete_cases.daily_average$steps),]
 ```
 
 ## Imputing missing values
@@ -46,14 +50,16 @@ activity.complete_cases.daily_average[which.max(activity.complete_cases.daily_av
 sum(is.na(activity$steps))
 ```
 
-We can replace the missing values with the daily interval averages which are already available.
+We can replace the missing values with the daily interval averages which are 
+already available.
 ```{r}
 activity.missing <- activity[is.na(activity$steps),]
 activity.missing$steps <- activity.complete_cases.daily_average$steps[
   match(activity.missing$interval, 
         activity.complete_cases.daily_average$interval)]
 
-activity$steps <- ifelse(is.na(activity$steps), activity.missing$steps, activity$steps)
+activity$steps <- ifelse(is.na(activity$steps), activity.missing$steps, 
+                         activity$steps)
 
 activity.daily <- ddply(activity, .(date), summarize, steps=sum(steps))
 
@@ -65,12 +71,22 @@ histogram(activity.daily$steps, breaks=15, xlab="Daily steps")
 mean(activity.daily$steps)
 median(activity.daily$steps)
 ```
-Replacing the missing values with the daily interval averages had essentially no effect on mean and median. This makes sense since we replace the NA's with computed averages. 
+Replacing the missing values with the daily interval averages had essentially no 
+effect on mean and median. This makes sense since we replace the NA's with 
+computed averages. 
 
 ## Are there differences in activity patterns between weekdays and weekends?
 ```{r}
-activity$daytype <- ifelse(weekdays(activity$date) %in% c("Saturday", "Sunday"), "weekend", "weekday")
-activity.daytype <- ddply(activity, .(daytype, interval), summarise, steps=mean(steps))
-xyplot(steps ~ interval | daytype, data=activity.daytype, type="l", layout=c(1, 2))
+activity$daytype <- ifelse(weekdays(activity$date) %in% c("Saturday", "Sunday"),
+                           "weekend", "weekday")
+activity.daytype <- ddply(activity, .(daytype, interval), summarise, 
+                          steps=mean(steps))
+xyplot(steps ~ interval | daytype, data=activity.daytype, type="l", 
+       layout=c(1, 2))
 ```
+
+The avergae steps taken per interval is higher on weekends compared to weekdays. 
+Additionally the activities are more distributed scross the day - seems like 
+people are generally active during the weekends.
+
 
