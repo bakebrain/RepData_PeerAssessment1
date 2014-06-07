@@ -35,14 +35,21 @@ xyplot(steps ~ interval , data=activity.daily.average, type="l")
 ## Imputing missing values
 ```{r}
 activity.missing <- activity[is.na(activity$steps),]
-activity.missing$steps <- activity.daily.average$steps[match(activity.missing$interval, activity.daily.average$interval)]
+activity.missing$steps <- activity.daily.average$steps[match(activity.missing$interval, 
+                                                             activity.daily.average$interval)]
 activity$steps <- ifelse(is.na(activity$steps), activity.missing$steps, activity$steps)
 
 activity.daily.complete <- ddply(activity, .(date), 
                         summarize, steps=sum(steps))
 histogram(activity.daily.complete$steps, breaks=15)
-mean(activity.daily$steps)
-median(activity.daily$steps)
+mean(activity.daily.complete$steps)
+median(activity.daily.complete$steps)
 ```
 
 ## Are there differences in activity patterns between weekdays and weekends?
+```{r}
+activity$day <- ifelse(weekdays(activity$date) %in% c("Saturday", "Sunday"), "weekend", "weekday")
+activity.daytype <- ddply(activity, .(day, interval), summarise, steps=mean(steps))
+xyplot(steps ~ interval | day, data=activity.daytype, type="l", layout=c(1, 2))
+```
+
