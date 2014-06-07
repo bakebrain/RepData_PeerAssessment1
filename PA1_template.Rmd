@@ -33,7 +33,10 @@ xyplot(steps ~ interval , data=activity.daily.average, type="l")
 
 
 ## Imputing missing values
-
-
+```{r}
+activity.missing <- activity[is.na(activity$steps),]
+activity.missing$steps <- activity.daily.average$steps[match(activity.missing$interval, activity.daily.average$interval)]
+activity$steps <- ifelse(is.na(activity$steps), activity.missing$steps, activity$steps)
+```
 
 ## Are there differences in activity patterns between weekdays and weekends?
