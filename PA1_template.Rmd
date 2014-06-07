@@ -37,6 +37,12 @@ xyplot(steps ~ interval , data=activity.daily.average, type="l")
 activity.missing <- activity[is.na(activity$steps),]
 activity.missing$steps <- activity.daily.average$steps[match(activity.missing$interval, activity.daily.average$interval)]
 activity$steps <- ifelse(is.na(activity$steps), activity.missing$steps, activity$steps)
+
+activity.daily.complete <- ddply(activity, .(date), 
+                        summarize, steps=sum(steps))
+histogram(activity.daily.complete$steps, breaks=15)
+mean(activity.daily$steps)
+median(activity.daily$steps)
 ```
 
 ## Are there differences in activity patterns between weekdays and weekends?
