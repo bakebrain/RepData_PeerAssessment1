@@ -134,7 +134,7 @@ xyplot(steps ~ interval | daytype, data=activity.daytype, type="l",
 ![plot of chunk unnamed-chunk-8](figure/unnamed-chunk-8.png) 
 
 The avergae steps taken per interval is higher on weekends compared to weekdays. 
-Additionally the activities are more distributed scross the day - seems like 
-people are generally active during the weekends.
+Additionally the activities are more distributed across the day -it  seems like 
+people are generally more active during the weekends.
 
 
